@@ -1,0 +1,32 @@
+description: >
+  Job that trigger CircleCI pipeline in another project with the payload specified
+
+docker:
+  - image: cimg/base:2021.12
+
+parameters:
+  repo-name:
+    type: string
+    default: circleci-demo-go
+    description: "Repo name to trigger pipeline for"
+  branch-name:
+    type: string
+    default: failfast
+    description: "Branch name to trigger"
+
+  trigger-params-json:
+    type: string
+    default: "{}"
+    description: Pipeline trigger parameters in JSON format
+
+  circle-token-env-var:
+    type: env_var_name
+    default: CIRCLE_TOKEN
+    description: Environment variable containing your CircleCI API Key. Default is $CIRCLECI_API_KEY
+
+steps:
+  - trigger-pipeline:
+      repo-name: << parameters.repo-name >>
+      branch-name: << parameters.branch-name >>
+      trigger-params-json: << parameters.trigger-params-json >>
+      circle-token-env-var: << parameters.circle-token-env-var >>

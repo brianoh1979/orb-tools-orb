@@ -1,0 +1,33 @@
+description: >
+  This command triggers CircleCI pipeline specified.
+  The job execution environment must have cURL utility available
+
+parameters:
+  repo-name:
+    type: string
+    description: "Repo name to trigger pipeline for"
+
+  branch-name:
+    type: string
+    default: main
+    description: "Branch name to trigger"
+
+  trigger-params-json:
+    type: string
+    default: "{}"
+    description: Pipeline trigger parameters in JSON format
+
+  circle-token-env-var:
+    type: env_var_name
+    default: CIRCLE_TOKEN
+    description: Environment variable containing your CircleCI API Key. Default is $CIRCLECI_API_KEY
+
+steps:
+  - run:
+      name: Run cURL request
+      command: |
+        curl --request POST \
+            --url "https://circleci.com/api/v2/project/gh/${CIRCLE_PROJECT_USERNAME}/<< parameters.repo-name >>/pipeline" \
+            --header "Circle-Token: ${<< parameters.circle-token-env-var >>}" \
+            --header "content-type: application/json" \
+            --data '{"branch":"<< parameters.branch-name >>","parameters":<< parameters.trigger-params-json >>}"'
